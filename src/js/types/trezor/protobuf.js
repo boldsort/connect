@@ -1,6 +1,6 @@
 // @flow
 // This file is auto generated from data/messages/message.json
-const Enum_InputScriptType = Object.freeze({
+export const Enum_InputScriptType = Object.freeze({
     SPENDADDRESS: 0,
     SPENDMULTISIG: 1,
     EXTERNAL: 2,
@@ -9,7 +9,7 @@ const Enum_InputScriptType = Object.freeze({
 });
 export type InputScriptType = $Keys<typeof Enum_InputScriptType>;
 
-const Enum_OutputScriptType = Object.freeze({
+export const Enum_OutputScriptType = Object.freeze({
     PAYTOADDRESS: 0,
     PAYTOSCRIPTHASH: 1,
     PAYTOMULTISIG: 2,
@@ -19,13 +19,13 @@ const Enum_OutputScriptType = Object.freeze({
 });
 export type OutputScriptType = $Keys<typeof Enum_OutputScriptType>;
 
-const Enum_DecredStakingSpendType = Object.freeze({
+export const Enum_DecredStakingSpendType = Object.freeze({
     SSGen: 0,
     SSRTX: 1,
 });
 export type DecredStakingSpendType = $Values<typeof Enum_DecredStakingSpendType>;
 
-const Enum_AmountUnit = Object.freeze({
+export const Enum_AmountUnit = Object.freeze({
     BITCOIN: 0,
     MILLIBITCOIN: 1,
     MICROBITCOIN: 2,
@@ -33,7 +33,7 @@ const Enum_AmountUnit = Object.freeze({
 });
 export type AmountUnit = $Values<typeof Enum_AmountUnit>;
 
-const Enum_CardanoAddressType = Object.freeze({
+export const Enum_CardanoAddressType = Object.freeze({
     BASE: 0,
     BASE_SCRIPT_KEY: 1,
     BASE_KEY_SCRIPT: 2,
@@ -48,7 +48,7 @@ const Enum_CardanoAddressType = Object.freeze({
 });
 export type CardanoAddressType = $Values<typeof Enum_CardanoAddressType>;
 
-const Enum_CardanoCertificateType = Object.freeze({
+export const Enum_CardanoCertificateType = Object.freeze({
     STAKE_REGISTRATION: 0,
     STAKE_DEREGISTRATION: 1,
     STAKE_DELEGATION: 2,
@@ -56,26 +56,26 @@ const Enum_CardanoCertificateType = Object.freeze({
 });
 export type CardanoCertificateType = $Values<typeof Enum_CardanoCertificateType>;
 
-const Enum_CardanoPoolRelayType = Object.freeze({
+export const Enum_CardanoPoolRelayType = Object.freeze({
     SINGLE_HOST_IP: 0,
     SINGLE_HOST_NAME: 1,
     MULTIPLE_HOST_NAME: 2,
 });
 export type CardanoPoolRelayType = $Values<typeof Enum_CardanoPoolRelayType>;
 
-const Enum_BackupType = Object.freeze({
+export const Enum_BackupType = Object.freeze({
     Bip39: 0,
     Slip39_Basic: 1,
     Slip39_Advanced: 2,
 });
 export type BackupType = $Keys<typeof Enum_BackupType>;
 
-const Enum_SafetyCheckLevel = Object.freeze({
+export const Enum_SafetyCheckLevel = Object.freeze({
     Strict: 0,
     PromptAlways: 1,
     PromptTemporarily: 2,
 });
-export type SafetyCheckLevel = $Values<typeof Enum_SafetyCheckLevel>;
+export type SafetyCheckLevel = $Keys<typeof Enum_SafetyCheckLevel>;
 
 // BinanceGetAddress
 export type BinanceGetAddress = {
@@ -129,7 +129,7 @@ export type BinanceTransferMsg = {
     outputs: BinanceInputOutput[],
 };
 
-const Enum_BinanceOrderType = Object.freeze({
+export const Enum_BinanceOrderType = Object.freeze({
     OT_UNKNOWN: 0,
     MARKET: 1,
     LIMIT: 2,
@@ -137,14 +137,14 @@ const Enum_BinanceOrderType = Object.freeze({
 });
 export type BinanceOrderType = $Values<typeof Enum_BinanceOrderType>;
 
-const Enum_BinanceOrderSide = Object.freeze({
+export const Enum_BinanceOrderSide = Object.freeze({
     SIDE_UNKNOWN: 0,
     BUY: 1,
     SELL: 2,
 });
 export type BinanceOrderSide = $Values<typeof Enum_BinanceOrderSide>;
 
-const Enum_BinanceTimeInForce = Object.freeze({
+export const Enum_BinanceTimeInForce = Object.freeze({
     TIF_UNKNOWN: 0,
     GTE: 1,
     TIF_RESERVED: 2,
@@ -284,7 +284,7 @@ export type SignTx = {
     decred_staking_ticket?: boolean,
 };
 
-const Enum_RequestType = Object.freeze({
+export const Enum_RequestType = Object.freeze({
     TXINPUT: 0,
     TXOUTPUT: 1,
     TXMETA: 2,
@@ -376,49 +376,6 @@ export type TxOutputType =
       |};
 // - TxOutputType replacement end
 
-// TxAck
-// - TxAck replacement
-// TxAck needs more exact types
-// differences: RefTxInputType (no address_n) and TxInputType, partial exact responses in TxAckResponse
-export type RefTxInputType = {|
-    prev_hash: string,
-    prev_index: number,
-    script_sig: string,
-    sequence: number,
-    decred_tree?: number,
-|};
-
-export type TxAckResponse =
-    | {|
-          inputs: Array<TxInputType | RefTxInputType>,
-      |}
-    | {|
-          bin_outputs: TxOutputBinType[],
-      |}
-    | {|
-          outputs: TxOutputType[],
-      |}
-    | {|
-          extra_data: string,
-      |}
-    | {|
-          version?: number,
-          lock_time?: number,
-          inputs_cnt: number,
-          outputs_cnt: number,
-          extra_data?: string,
-          extra_data_len?: number,
-          timestamp?: number,
-          version_group_id?: number,
-          expiry?: number,
-          branch_id?: number,
-      |};
-
-export type TxAck = {
-    tx: TxAckResponse,
-};
-// - TxAck replacement end
-
 // TxInput
 export type TxInput = {
     address_n: number[],
@@ -472,6 +429,43 @@ export type PrevOutput = {
     script_pubkey: string,
     decred_script_version?: number,
 };
+
+// TxAck
+// - TxAck replacement
+// TxAck needs more exact types
+// PrevInput and TxInputType requires exact responses in TxAckResponse
+// main difference: PrevInput should not contain address_n (unexpected field by protobuf)
+
+export type TxAckResponse =
+    | {|
+          inputs: Array<TxInputType | PrevInput>,
+      |}
+    | {|
+          bin_outputs: TxOutputBinType[],
+      |}
+    | {|
+          outputs: TxOutputType[],
+      |}
+    | {|
+          extra_data: string,
+      |}
+    | {|
+          version?: number,
+          lock_time?: number,
+          inputs_cnt: number,
+          outputs_cnt: number,
+          extra_data?: string,
+          extra_data_len?: number,
+          timestamp?: number,
+          version_group_id?: number,
+          expiry?: number,
+          branch_id?: number,
+      |};
+
+export type TxAck = {
+    tx: TxAckResponse,
+};
+// - TxAck replacement end
 
 export type TxAckInputWrapper = {
     input: TxInput,
@@ -680,6 +674,18 @@ export type CardanoTxWithdrawalType = {
     amount: number,
 };
 
+export type CardanoCatalystRegistrationParametersType = {
+    voting_public_key: string,
+    staking_path: number[],
+    reward_address_parameters: CardanoAddressParametersType,
+    nonce: string | number,
+};
+
+export type CardanoTxAuxiliaryDataType = {
+    blob?: string,
+    catalyst_registration_parameters?: CardanoCatalystRegistrationParametersType,
+};
+
 // CardanoSignTx
 export type CardanoSignTx = {
     inputs: CardanoTxInputType[],
@@ -690,8 +696,8 @@ export type CardanoSignTx = {
     network_id: number,
     certificates: CardanoTxCertificateType[],
     withdrawals: CardanoTxWithdrawalType[],
-    metadata?: string,
-    validity_interval_start?: number,
+    validity_interval_start?: string | number,
+    auxiliary_data?: CardanoTxAuxiliaryDataType,
 };
 
 // CardanoSignedTxChunk
@@ -713,7 +719,7 @@ export type Success = {
     message: string,
 };
 
-const Enum_FailureType = Object.freeze({
+export const Enum_FailureType = Object.freeze({
     Failure_UnexpectedMessage: 1,
     Failure_ButtonExpected: 2,
     Failure_DataError: 3,
@@ -738,7 +744,7 @@ export type Failure = {
     message?: string,
 };
 
-const Enum_ButtonRequestType = Object.freeze({
+export const Enum_ButtonRequestType = Object.freeze({
     ButtonRequest_Other: 1,
     ButtonRequest_FeeOverThreshold: 2,
     ButtonRequest_ConfirmOutput: 3,
@@ -760,24 +766,26 @@ const Enum_ButtonRequestType = Object.freeze({
     ButtonRequest_PassphraseEntry: 19,
     ButtonRequest_PinEntry: 20,
 });
-export type ButtonRequestType = $Values<typeof Enum_ButtonRequestType>;
+export type ButtonRequestType = $Keys<typeof Enum_ButtonRequestType>;
 
 // ButtonRequest
 export type ButtonRequest = {
     code?: ButtonRequestType,
+    pages?: number,
+    page_number?: number,
 };
 
 // ButtonAck
 export type ButtonAck = {};
 
-const Enum_PinMatrixRequestType = Object.freeze({
+export const Enum_PinMatrixRequestType = Object.freeze({
     PinMatrixRequestType_Current: 1,
     PinMatrixRequestType_NewFirst: 2,
     PinMatrixRequestType_NewSecond: 3,
     PinMatrixRequestType_WipeCodeFirst: 4,
     PinMatrixRequestType_WipeCodeSecond: 5,
 });
-export type PinMatrixRequestType = $Values<typeof Enum_PinMatrixRequestType>;
+export type PinMatrixRequestType = $Keys<typeof Enum_PinMatrixRequestType>;
 
 // PinMatrixRequest
 export type PinMatrixRequest = {
@@ -863,7 +871,7 @@ export type ECDHSessionKey = {
     public_key?: string,
 };
 
-const Enum_DebugSwipeDirection = Object.freeze({
+export const Enum_DebugSwipeDirection = Object.freeze({
     UP: 0,
     DOWN: 1,
     LEFT: 2,
@@ -917,7 +925,7 @@ export type DebugLinkState = {
     recovery_fake_word?: string,
     recovery_word_pos?: number,
     reset_word_pos?: number,
-    mnemonic_type?: number,
+    mnemonic_type?: BackupType,
     layout_lines: string[],
 };
 
@@ -1240,7 +1248,7 @@ export type LiskPublicKey = {
     public_key: string,
 };
 
-const Enum_LiskTransactionType = Object.freeze({
+export const Enum_LiskTransactionType = Object.freeze({
     Transfer: 0,
     RegisterSecondPassphrase: 1,
     RegisterDelegate: 2,
@@ -1324,7 +1332,7 @@ export type Initialize = {
 // GetFeatures
 export type GetFeatures = {};
 
-const Enum_Capability = Object.freeze({
+export const Enum_Capability = Object.freeze({
     Capability_Bitcoin: 1,
     Capability_Bitcoin_like: 2,
     Capability_Binance: 3,
@@ -1351,40 +1359,40 @@ export type Features = {
     major_version: number,
     minor_version: number,
     patch_version: number,
-    bootloader_mode?: boolean | null,
+    bootloader_mode: boolean | null,
     device_id: string | null,
-    pin_protection: boolean,
-    passphrase_protection: boolean,
-    language?: string,
+    pin_protection: boolean | null,
+    passphrase_protection: boolean | null,
+    language: string | null,
     label: string | null,
-    initialized: boolean,
-    revision: string,
-    bootloader_hash?: string | null,
-    imported?: boolean,
-    unlocked?: boolean,
-    firmware_present?: boolean | null,
-    needs_backup: boolean,
-    flags: number,
+    initialized: boolean | null,
+    revision: string | null,
+    bootloader_hash: string | null,
+    imported: boolean | null,
+    unlocked: boolean | null,
+    firmware_present: boolean | null,
+    needs_backup: boolean | null,
+    flags: number | null,
     model: string,
-    fw_major?: number | null,
-    fw_minor?: number | null,
-    fw_patch?: number | null,
-    fw_vendor?: string | null,
-    fw_vendor_keys?: string,
-    unfinished_backup: boolean,
-    no_backup: boolean,
-    recovery_mode?: boolean,
+    fw_major: number | null,
+    fw_minor: number | null,
+    fw_patch: number | null,
+    fw_vendor: string | null,
+    fw_vendor_keys: string | null,
+    unfinished_backup: boolean | null,
+    no_backup: boolean | null,
+    recovery_mode: boolean | null,
     capabilities: Capability[],
-    backup_type?: BackupType,
-    sd_card_present?: boolean,
-    sd_protection?: boolean,
-    wipe_code_protection?: boolean,
-    session_id?: string,
-    passphrase_always_on_device?: boolean,
-    safety_checks?: SafetyCheckLevel,
-    auto_lock_delay_ms?: number,
-    display_rotation?: number,
-    experimental_features?: boolean,
+    backup_type: BackupType | null,
+    sd_card_present: boolean | null,
+    sd_protection: boolean | null,
+    wipe_code_protection: boolean | null,
+    session_id: string | null,
+    passphrase_always_on_device: boolean | null,
+    safety_checks: SafetyCheckLevel | null,
+    auto_lock_delay_ms: number | null,
+    display_rotation: number | null,
+    experimental_features: boolean | null,
 };
 
 // LockDevice
@@ -1421,7 +1429,7 @@ export type ChangeWipeCode = {
     remove?: boolean,
 };
 
-const Enum_SdProtectOperationType = Object.freeze({
+export const Enum_SdProtectOperationType = Object.freeze({
     DISABLE: 0,
     ENABLE: 1,
     REFRESH: 2,
@@ -1493,7 +1501,7 @@ export type EntropyAck = {
     entropy?: string,
 };
 
-const Enum_RecoveryDeviceType = Object.freeze({
+export const Enum_RecoveryDeviceType = Object.freeze({
     RecoveryDeviceType_ScrambledWords: 0,
     RecoveryDeviceType_Matrix: 1,
 });
@@ -1512,12 +1520,12 @@ export type RecoveryDevice = {
     dry_run?: boolean,
 };
 
-const Enum_WordRequestType = Object.freeze({
+export const Enum_WordRequestType = Object.freeze({
     WordRequestType_Plain: 0,
     WordRequestType_Matrix9: 1,
     WordRequestType_Matrix6: 2,
 });
-export type WordRequestType = $Values<typeof Enum_WordRequestType>;
+export type WordRequestType = $Keys<typeof Enum_WordRequestType>;
 
 // WordRequest
 export type WordRequest = {
@@ -1596,7 +1604,7 @@ export type NEMProvisionNamespace = {
     fee?: number,
 };
 
-const Enum_NEMMosaicLevy = Object.freeze({
+export const Enum_NEMMosaicLevy = Object.freeze({
     MosaicLevy_Absolute: 1,
     MosaicLevy_Percentile: 2,
 });
@@ -1626,7 +1634,7 @@ export type NEMMosaicCreation = {
     fee?: number,
 };
 
-const Enum_NEMSupplyChangeType = Object.freeze({
+export const Enum_NEMSupplyChangeType = Object.freeze({
     SupplyChange_Increase: 1,
     SupplyChange_Decrease: 2,
 });
@@ -1639,7 +1647,7 @@ export type NEMMosaicSupplyChange = {
     delta?: number,
 };
 
-const Enum_NEMModificationType = Object.freeze({
+export const Enum_NEMModificationType = Object.freeze({
     CosignatoryModification_Add: 1,
     CosignatoryModification_Delete: 2,
 });
@@ -1655,7 +1663,7 @@ export type NEMAggregateModification = {
     relative_change?: number,
 };
 
-const Enum_NEMImportanceTransferMode = Object.freeze({
+export const Enum_NEMImportanceTransferMode = Object.freeze({
     ImportanceTransfer_Activate: 1,
     ImportanceTransfer_Deactivate: 2,
 });
@@ -1894,7 +1902,7 @@ export type TezosPublicKey = {
     public_key: string,
 };
 
-const Enum_TezosContractType = Object.freeze({
+export const Enum_TezosContractType = Object.freeze({
     Implicit: 0,
     Originated: 1,
 });
@@ -1966,7 +1974,7 @@ export type TezosProposalOp = {
     proposals: string[],
 };
 
-const Enum_TezosBallotType = Object.freeze({
+export const Enum_TezosBallotType = Object.freeze({
     Yay: 0,
     Nay: 1,
     Pass: 2,
@@ -2032,12 +2040,12 @@ export type MessageType = {
     TxInputType: $Exact<TxInputType>,
     TxOutputBinType: $Exact<TxOutputBinType>,
     TxOutputType: $Exact<TxOutputType>,
-    TxAck: TxAck,
     TxInput: $Exact<TxInput>,
     TxOutput: $Exact<TxOutput>,
     PrevTx: $Exact<PrevTx>,
     PrevInput: $Exact<PrevInput>,
     PrevOutput: $Exact<PrevOutput>,
+    TxAck: TxAck,
     TxAckInputWrapper: $Exact<TxAckInputWrapper>,
     TxAckInput: $Exact<TxAckInput>,
     TxAckOutputWrapper: $Exact<TxAckOutputWrapper>,
@@ -2072,6 +2080,8 @@ export type MessageType = {
     CardanoPoolParametersType: $Exact<CardanoPoolParametersType>,
     CardanoTxCertificateType: $Exact<CardanoTxCertificateType>,
     CardanoTxWithdrawalType: $Exact<CardanoTxWithdrawalType>,
+    CardanoCatalystRegistrationParametersType: $Exact<CardanoCatalystRegistrationParametersType>,
+    CardanoTxAuxiliaryDataType: CardanoTxAuxiliaryDataType,
     CardanoSignTx: $Exact<CardanoSignTx>,
     CardanoSignedTxChunk: $Exact<CardanoSignedTxChunk>,
     CardanoSignedTxChunkAck: CardanoSignedTxChunkAck,

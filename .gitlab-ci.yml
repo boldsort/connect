@@ -8,15 +8,15 @@ stages:
 before_script:
   - nix-shell --run "yarn"
 
-# Build & Lint
-flow lint:
+verify:
   stage: build
   script:
+    - nix-shell --run "yarn test:health"
     - nix-shell --run "yarn flow"
+    - nix-shell --run "yarn typescript"
     - nix-shell --run "yarn lint"
     - nix-shell --run "yarn test:unit"
 
-# Build & Lint
 build:
   stage: build
   script:
@@ -56,10 +56,12 @@ deploy review:
   variables:
     SDL_VIDEODRIVER: "dummy"
     TESTS_FIRMWARE: "2-master"
+    TESTS_USE_TX_CACHE: "false"
+    TESTS_USE_WS_CACHE: "false"
   script:
     - "echo Firmware version: $TESTS_FIRMWARE"
     - /trezor-user-env/run.sh &
-    - nix-shell --run "yarn jest --config jest.config.integration.js --verbose --detectOpenHandles --forceExit --coverage true"
+    - nix-shell --run "yarn test:integration --coverage true"
 
 test management:
   extends: .test
